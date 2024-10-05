@@ -2,6 +2,7 @@ package com.xled.yaowosh
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -45,6 +47,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale.Category
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +89,7 @@ fun Initialization(modifier: Modifier = Modifier) {
         Column(modifier = modifier.fillMaxSize()) {
             TopBar()
             Slider()
-
+            Category()
 
         }
     }
@@ -121,7 +124,6 @@ fun TopBar(){
 @Composable
 fun Slider(){
     val listState = rememberLazyListState()
-
 
     LazyRow(
         state = listState,
@@ -283,20 +285,157 @@ fun Slider(){
     }
 }
 
-
 @Composable
-fun calculateScale(listState: LazyListState, index: Int): Float {
-    val firstVisibleItem = listState.firstVisibleItemIndex
-    val firstVisibleOffset = listState.firstVisibleItemScrollOffset
+fun Category(){
 
-    return if (firstVisibleItem == index) {
-        lerp(0.85f, 1.05f, 1 - (firstVisibleOffset / 300f).coerceIn(0f, 1f))
-    } else if (firstVisibleItem + 1 == index){
-        lerp(1.05f, 0.85f, 1 - (firstVisibleOffset / 300f).coerceIn(0f, 1f))
-    } else{
-        0.85f
+    var color = Color(0xFFEEEEEE)
+    if (isSystemInDarkTheme()){
+        color = Color(0xFF555555)
+    }
+
+
+    LazyRow(
+        modifier = Modifier.fillMaxWidth()
+            .padding(top = 15.dp)
+    ){
+        item {
+            Column {
+                Card(
+                    Modifier
+                        .width(80.dp)
+                        .height(80.dp)
+                        .padding(5.dp),
+                        RoundedCornerShape(50.dp), CardDefaults.cardColors(
+                        containerColor = color,
+                    ), CardDefaults.cardElevation(8.dp)
+                ){
+                    Image(
+                        painter = painterResource(R.drawable.category_fruits),
+                        contentDescription = "category_fruits",
+                        modifier = Modifier.padding(10.dp)
+                            .height(70.dp)
+                            .width(70.dp)
+                    )
+
+                }
+                Text(text = "fruits",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    fontSize = 12.sp
+                )
+
+            }
+        }
+
+        item {
+            Column {
+                Card(
+                    Modifier
+                        .width(80.dp)
+                        .height(80.dp)
+                        .padding(5.dp),
+                    RoundedCornerShape(50.dp), CardDefaults.cardColors(
+                        containerColor = color,
+                    ), CardDefaults.cardElevation(8.dp)
+                ){
+                    Image(
+                        painter = painterResource(R.drawable.category_milk),
+                        contentDescription = "category_milk",
+                        modifier = Modifier.padding(10.dp)
+                            .height(70.dp)
+                            .width(70.dp)
+                    )
+
+                }
+                Text(text = "milk",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    fontSize = 12.sp
+                )
+            }
+        }
+
+        item {
+            Column {
+                Card(
+                    Modifier
+                        .width(80.dp)
+                        .height(80.dp)
+                        .padding(5.dp),
+                    RoundedCornerShape(50.dp), CardDefaults.cardColors(
+                        containerColor = color,
+                    ), CardDefaults.cardElevation(8.dp)
+                ){
+                    Image(
+                        painter = painterResource(R.drawable.category_laudry),
+                        contentDescription = "category_laudry",
+                        modifier = Modifier.padding(10.dp)
+                            .height(70.dp)
+                            .width(70.dp)
+                    )
+
+                }
+                Text(text = "laudry",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    fontSize = 12.sp
+                )
+            }
+        }
+
+        item {
+            Column {
+                Card(
+                    Modifier
+                        .width(80.dp)
+                        .height(80.dp)
+                        .padding(5.dp),
+                    RoundedCornerShape(50.dp), CardDefaults.cardColors(
+                        containerColor = color,
+                    ), CardDefaults.cardElevation(8.dp)
+                ){
+                    Image(
+                        painter = painterResource(R.drawable.category_beverages),
+                        contentDescription = "category_beverages",
+                        modifier = Modifier.padding(10.dp)
+                            .height(70.dp)
+                            .width(70.dp)
+                    )
+
+                }
+                Text(text = "beverages",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    fontSize = 12.sp
+                )
+            }
+        }
+
+        item {
+            Column {
+                Card(
+                    Modifier
+                        .width(80.dp)
+                        .height(80.dp)
+                        .padding(5.dp),
+                    RoundedCornerShape(50.dp), CardDefaults.cardColors(
+                        containerColor = color,
+                    ), CardDefaults.cardElevation(8.dp)
+                ){
+                    Image(
+                        painter = painterResource(R.drawable.category_vegetable),
+                        contentDescription = "category_vegetable",
+                        modifier = Modifier.padding(10.dp)
+                            .height(70.dp)
+                            .width(70.dp)
+                    )
+
+                }
+                Text(text = "vegetable",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    fontSize = 12.sp
+                )
+            }
+        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
