@@ -45,6 +45,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -486,7 +487,7 @@ fun CardProduct(item: Product){
             Button(modifier = Modifier.align(Alignment.BottomEnd)
                 .padding(10.dp)
                 .height(50.dp)
-                .width(50.dp), onClick = {  }) {
+                .width(50.dp), onClick = { addBasket(item) }) {
                 Text("+", fontSize = 30.sp)
             }
         }
@@ -498,12 +499,14 @@ fun CardProduct(item: Product){
                 modifier = Modifier.align(Alignment.CenterVertically).padding(end = 7.dp))
 
             Text("${item.rate} (${item.amount_rate})")
-
         }
+        Text("$${item.cost}", fontSize = 20.sp, modifier = Modifier.padding(start = 20.dp, top = 5.dp))
     }
-
 }
 
+fun addBasket(item: Product) {
+
+}
 
 
 @Preview(showBackground = true)
