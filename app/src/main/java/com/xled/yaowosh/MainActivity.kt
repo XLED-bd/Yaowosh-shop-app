@@ -2,26 +2,23 @@ package com.xled.yaowosh
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -40,14 +37,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.fontscaling.MathUtils.lerp
 import androidx.compose.ui.unit.sp
 import com.xled.yaowosh.ui.theme.YaowoshTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Locale.Category
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +84,7 @@ fun Initialization(modifier: Modifier = Modifier) {
         Column(modifier = modifier.fillMaxSize()) {
             TopBar()
             Slider()
+            Categorys()
             Category()
 
         }
@@ -286,8 +282,7 @@ fun Slider(){
 }
 
 @Composable
-fun Category(){
-
+fun Categorys(){
     var color = Color(0xFFEEEEEE)
     if (isSystemInDarkTheme()){
         color = Color(0xFF555555)
@@ -436,11 +431,86 @@ fun Category(){
     }
 }
 
+@Composable
+fun Category(){
+
+    val list_products = listOf(Product(
+        0, "Banana", 4.8, 287, 3.99, R.drawable.banana),
+        Product(1, "Pepper", 4.8, 287, 2.99, R.drawable.pepper),
+        Product(2, "Orange", 4.9, 356, 4.99, R.drawable.orange)
+        )
+
+
+    Column (Modifier.fillMaxWidth()) {
+        Box(Modifier.fillMaxWidth()){
+            Text("Fruits", modifier = Modifier.padding(start = 10.dp).align(Alignment.CenterStart))
+
+            Text("See all", modifier = Modifier.padding(end = 10.dp).align(Alignment.CenterEnd), color = Color(0xFF00FF00))
+        }
+        LazyRow {
+            items(list_products, itemContent = { item ->
+                CardProduct(item)
+            })
+        }
+    }
+}
+
+@Composable
+fun CardProduct(item: Product){
+    var color = Color(0xFFEEEEEE)
+    if (isSystemInDarkTheme()){
+        color = Color(0xFF555555)
+    }
+    Column {
+        Box(modifier = Modifier.padding(10.dp)){
+            Card(
+                Modifier
+                    .width(165.dp)
+                    .height(165.dp)
+                    .padding(8.dp),
+                    RoundedCornerShape(16.dp), CardDefaults.cardColors(
+                    containerColor = color,
+                ), CardDefaults.cardElevation(8.dp)
+            ){
+                Image(
+                    painter = painterResource(item.image),
+                    contentDescription = "Slide1",
+                    modifier = Modifier
+                        .graphicsLayer {
+                            scaleX = 2.5f
+                            scaleY = 2.5f
+                        }
+                        .padding(50.dp)
+                )
+            }
+            Button(modifier = Modifier.align(Alignment.BottomEnd)
+                .padding(10.dp)
+                .height(50.dp)
+                .width(50.dp), onClick = {  }) {
+                Text("+", fontSize = 30.sp)
+            }
+        }
+        Text(text = item.name, fontSize = 20.sp, modifier = Modifier.padding(start = 20.dp))
+        Row(modifier = Modifier.padding(start = 20.dp)) {
+
+            Image(painter = painterResource(R.drawable.star),
+            contentDescription = "star",
+                modifier = Modifier.align(Alignment.CenterVertically).padding(end = 7.dp))
+
+            Text("${item.rate} (${item.amount_rate})")
+
+        }
+    }
+
+}
+
+
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     YaowoshTheme {
+        //Category()
         Initialization()
     }
 }
