@@ -37,10 +37,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         catalogViewModel,
                         cartViewModel,
-                    ) {
-                        val intent = Intent(this, CartActivity::class.java)
-                        startActivity(intent)
-                    }
+                    )
                 }
             }
         }

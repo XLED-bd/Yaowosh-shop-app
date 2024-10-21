@@ -8,12 +8,11 @@ import com.xled.yaowosh.data.models.CartItem
 import com.xled.yaowosh.data.models.Product
 
 class CartViewModel: ViewModel() {
-    private val _cart = MutableLiveData<MutableList<CartItem>>()
+    private val _cart = MutableLiveData(emptyList<CartItem>().toMutableList())
     val cart: LiveData<MutableList<CartItem>> = _cart
 
     fun addItem(product: Product){
         _cart.value?.add(CartItem(product, 1))
-        Log.d("!!!asdf!", _cart.value.toString())
     }
 
 }

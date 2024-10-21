@@ -52,23 +52,23 @@ fun MainPage(
     modifier: Modifier = Modifier,
     catalogViewModel: ProductViewModel,
     cartViewModel: CartViewModel,
-    onOpenCartActivity: () -> Unit
 ) {
     val list_product by catalogViewModel.product.observeAsState(emptyList())
-    val basket_list by cartViewModel.cart.observeAsState(emptyList())
+    val basket_list by cartViewModel.cart.observeAsState()
 
 
     Box{
         Column(modifier = modifier.fillMaxSize()) {
-            TopBar(onOpenCartActivity)
+            TopBar()
             Slider()
             Categorys()
             Category(list_product) { selectedItem ->
                 cartViewModel.addItem(selectedItem)
+                Log.d("!!!!", basket_list.toString())
             }
         }
 
-        if (cartViewModel.cart.value?.isEmpty() == true)
+        if (basket_list?.isEmpty() == false)
             Box(modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(20.dp)
@@ -95,7 +95,7 @@ fun MainPage(
 }
 
 @Composable
-fun TopBar(onOpenCartActivity: () -> Unit, ){
+fun TopBar(){
     Box(
         modifier = Modifier.height(50.dp).fillMaxWidth()
     ){
@@ -105,10 +105,6 @@ fun TopBar(onOpenCartActivity: () -> Unit, ){
             modifier = Modifier.align(Alignment.CenterStart).padding(start = 15.dp)
         )
 
-        Button(modifier = Modifier.align(Alignment.CenterEnd).padding(end = 15.dp),
-            onClick = {
-                onOpenCartActivity()
-            }){}
 
         if (!isSystemInDarkTheme()){
             Image(
