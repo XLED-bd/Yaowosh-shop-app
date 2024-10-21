@@ -1,4 +1,4 @@
-package com.xled.yaowosh
+package com.xled.yaowosh.data.models
 
 data class Product(
     val id: Int,
@@ -9,3 +9,6 @@ data class Product(
     val image: Int
     ) {
 }
+
+
+data class CartItem(val product: Product, val quantity: Int)

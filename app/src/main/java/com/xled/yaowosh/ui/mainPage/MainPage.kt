@@ -1,10 +1,10 @@
-package com.xled.yaowosh
+package com.xled.yaowosh.ui.mainPage
 
 import android.annotation.SuppressLint
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import android.content.ClipData.Item
+import android.content.Intent
+import android.util.Log
+import android.widget.ImageButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -23,77 +23,79 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.xled.yaowosh.ui.theme.YaowoshTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat.startActivity
+import com.xled.yaowosh.R
+import com.xled.yaowosh.data.models.CartItem
+import com.xled.yaowosh.data.models.Product
+import com.xled.yaowosh.logic.calculateScale
+import com.xled.yaowosh.ui.MainActivity
+import com.xled.yaowosh.ui.cart.CartActivity
+import com.xled.yaowosh.ui.cart.CartViewModel
 
-class MainActivity : ComponentActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            YaowoshTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Initialization(
-                        modifier = Modifier.padding(innerPadding)
+@SuppressLint("CoroutineCreationDuringComposition", "MutableCollectionMutableState")
+@Composable
+fun MainPage(
+    modifier: Modifier = Modifier,
+    catalogViewModel: ProductViewModel,
+    cartViewModel: CartViewModel,
+    onOpenCartActivity: () -> Unit
+) {
+    val list_product by catalogViewModel.product.observeAsState(emptyList())
+    val basket_list by cartViewModel.cart.observeAsState(emptyList())
+
+
+    Box{
+        Column(modifier = modifier.fillMaxSize()) {
+            TopBar(onOpenCartActivity)
+            Slider()
+            Categorys()
+            Category(list_product) { selectedItem ->
+                cartViewModel.addItem(selectedItem)
+            }
+        }
+
+        if (cartViewModel.cart.value?.isEmpty() == true)
+            Box(modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(20.dp)
+                .fillMaxWidth()
+            ) {
+                Text(text = basket_list.toString())
+
+                if (!isSystemInDarkTheme()){
+                    Image(
+                        painter = painterResource(R.drawable.basket),
+                        contentDescription = "Basket",
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.basket_black_theme),
+                        contentDescription = "Basket",
+                        modifier = Modifier.align(Alignment.CenterEnd)
                     )
                 }
             }
         }
-    }
-}
 
-@SuppressLint("CoroutineCreationDuringComposition")
-@Composable
-fun Initialization(modifier: Modifier = Modifier) {
-
-    var is_loading by remember { mutableStateOf(false)}
-
-
-    CoroutineScope(Dispatchers.IO).launch {
-        delay(1000) // Для имитации загрузки
-        is_loading = false
-    }
-
-    if (is_loading) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ){
-            Image(painter = painterResource(R.drawable.yaowosh),
-                contentDescription = "Yaowosh",
-                modifier = Modifier.align(Alignment.Center))
-        }
-    } else {
-        Column(modifier = modifier.fillMaxSize()) {
-            TopBar()
-            Slider()
-            Categorys()
-            Category()
-
-        }
-    }
 }
 
 @Composable
-fun TopBar(){
+fun TopBar(onOpenCartActivity: () -> Unit, ){
     Box(
         modifier = Modifier.height(50.dp).fillMaxWidth()
     ){
@@ -102,11 +104,17 @@ fun TopBar(){
             fontSize = 15.sp,
             modifier = Modifier.align(Alignment.CenterStart).padding(start = 15.dp)
         )
+
+        Button(modifier = Modifier.align(Alignment.CenterEnd).padding(end = 15.dp),
+            onClick = {
+                onOpenCartActivity()
+            }){}
+
         if (!isSystemInDarkTheme()){
             Image(
                 painter = painterResource(R.drawable.basket),
                 contentDescription = "Basket",
-                modifier = Modifier.align(Alignment.CenterEnd).padding(end = 15.dp)
+                modifier = Modifier.align(Alignment.CenterEnd).padding(end = 15.dp),
             )
         } else {
             Image(
@@ -158,7 +166,7 @@ fun Slider(){
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Button(onClick = { }) {
-                           Text("Order")
+                            Text("Order")
                         }
                     }
 
@@ -301,7 +309,7 @@ fun Categorys(){
                         .width(80.dp)
                         .height(80.dp)
                         .padding(5.dp),
-                        RoundedCornerShape(50.dp), CardDefaults.cardColors(
+                    RoundedCornerShape(50.dp), CardDefaults.cardColors(
                         containerColor = color,
                     ), CardDefaults.cardElevation(8.dp)
                 ){
@@ -429,91 +437,5 @@ fun Categorys(){
                 )
             }
         }
-    }
-}
-
-@Composable
-fun Category(){
-
-    val list_products = listOf(Product(
-        0, "Banana", 4.8, 287, 3.99, R.drawable.banana),
-        Product(1, "Pepper", 4.8, 287, 2.99, R.drawable.pepper),
-        Product(2, "Orange", 4.9, 356, 4.99, R.drawable.orange)
-        )
-
-
-    Column (Modifier.fillMaxWidth()) {
-        Box(Modifier.fillMaxWidth()){
-            Text("Fruits", modifier = Modifier.padding(start = 10.dp).align(Alignment.CenterStart))
-
-            Text("See all", modifier = Modifier.padding(end = 10.dp).align(Alignment.CenterEnd), color = Color(0xFF00FF00))
-        }
-        LazyRow {
-            items(list_products, itemContent = { item ->
-                CardProduct(item)
-            })
-        }
-    }
-}
-
-@Composable
-fun CardProduct(item: Product){
-    var color = Color(0xFFEEEEEE)
-    if (isSystemInDarkTheme()){
-        color = Color(0xFF555555)
-    }
-    Column {
-        Box(modifier = Modifier.padding(10.dp)){
-            Card(
-                Modifier
-                    .width(165.dp)
-                    .height(165.dp)
-                    .padding(8.dp),
-                    RoundedCornerShape(16.dp), CardDefaults.cardColors(
-                    containerColor = color,
-                ), CardDefaults.cardElevation(8.dp)
-            ){
-                Image(
-                    painter = painterResource(item.image),
-                    contentDescription = "Slide1",
-                    modifier = Modifier
-                        .graphicsLayer {
-                            scaleX = 2.5f
-                            scaleY = 2.5f
-                        }
-                        .padding(50.dp)
-                )
-            }
-            Button(modifier = Modifier.align(Alignment.BottomEnd)
-                .padding(10.dp)
-                .height(50.dp)
-                .width(50.dp), onClick = { addBasket(item) }) {
-                Text("+", fontSize = 30.sp)
-            }
-        }
-        Text(text = item.name, fontSize = 20.sp, modifier = Modifier.padding(start = 20.dp))
-        Row(modifier = Modifier.padding(start = 20.dp)) {
-
-            Image(painter = painterResource(R.drawable.star),
-            contentDescription = "star",
-                modifier = Modifier.align(Alignment.CenterVertically).padding(end = 7.dp))
-
-            Text("${item.rate} (${item.amount_rate})")
-        }
-        Text("$${item.cost}", fontSize = 20.sp, modifier = Modifier.padding(start = 20.dp, top = 5.dp))
-    }
-}
-
-fun addBasket(item: Product) {
-
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    YaowoshTheme {
-        //Category()
-        Initialization()
     }
 }

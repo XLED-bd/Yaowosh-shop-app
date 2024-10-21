@@ -1,4 +1,4 @@
-package com.xled.yaowosh
+package com.xled.yaowosh.logic
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.lazy.LazyListState
