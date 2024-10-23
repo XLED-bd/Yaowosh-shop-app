@@ -1,12 +1,8 @@
 package com.xled.yaowosh.ui.mainPage
 
-import android.annotation.SuppressLint
-import android.content.ClipData.Item
 import android.content.Intent
 import android.util.Log
-import android.widget.ImageButton
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -29,23 +26,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import com.xled.yaowosh.R
 import com.xled.yaowosh.data.models.CartItem
 import com.xled.yaowosh.data.models.CartState
 import com.xled.yaowosh.data.models.Product
 import com.xled.yaowosh.logic.calculateScale
-import com.xled.yaowosh.ui.MainActivity
 import com.xled.yaowosh.ui.cart.CartActivity
 import com.xled.yaowosh.ui.cart.CartViewModel
 import com.xled.yaowosh.ui.cart.MiniIconItemCart
@@ -57,6 +51,7 @@ fun MainPage(
     modifier: Modifier = Modifier,
     catalogViewModel: ProductViewModel,
     cartViewModel: CartViewModel,
+    onOpenCartClick: () -> Unit
 ) {
     val list_product by catalogViewModel.product.observeAsState(emptyList())
     val cart_state by cartViewModel.cart.collectAsState()
@@ -64,7 +59,7 @@ fun MainPage(
 
     Box{
         Column(modifier = modifier.fillMaxSize()) {
-            TopBar()
+            TopBar(onOpenCartClick)
             Slider()
             Categorys()
             Category(list_product) { selectedItem ->
@@ -73,43 +68,49 @@ fun MainPage(
             }
         }
 
-        if (cart_state.list_cart.isNotEmpty())
+        if (cart_state.list_cart.isNotEmpty()) {
             Card(modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(20.dp),
                 RoundedCornerShape(50.dp),
                 CardDefaults.cardColors(
                     containerColor = Color.Green,
-                ), CardDefaults.cardElevation(8.dp)
+                ), CardDefaults.cardElevation(8.dp),
+            ) {
+                Row {
+                    Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+                        if (!isSystemInDarkTheme()){
+                            Image(
+                                painter = painterResource(R.drawable.basket),
+                                contentDescription = "Basket",
+                                modifier = Modifier.align(Alignment.CenterEnd).padding(10.dp)
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(R.drawable.basket_black_theme),
+                                contentDescription = "Basket",
+                                modifier = Modifier.align(Alignment.CenterEnd)
+                            )
+                        }
+                    }
 
-            ) { Box {
-                    LazyRow ( Modifier.align(Alignment.CenterEnd).padding(end = 40.dp)){
+                    LazyRow ( Modifier.align(Alignment.CenterVertically)) {
                         items(cart_state.list_cart) { item ->
                             MiniIconItemCart(item)
                         }
                     }
-                    //Text(text = cart_state.list_cart.toString())
-
-                    if (!isSystemInDarkTheme()){
-                        Image(
-                            painter = painterResource(R.drawable.basket),
-                            contentDescription = "Basket",
-                            modifier = Modifier.align(Alignment.CenterEnd).padding(end = 10.dp)
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(R.drawable.basket_black_theme),
-                            contentDescription = "Basket",
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        )
-                    }
                 }
+            }
             }
         }
 }
 
 @Composable
-fun TopBar(){
+fun TopBar(onOpenCartClick: () -> Unit){
+    var color = Color(0xFFEEEEEE)
+    if (isSystemInDarkTheme()){
+        color = Color(0xFF555555)
+    }
     Box(
         modifier = Modifier.height(50.dp).fillMaxWidth()
     ){
@@ -119,7 +120,10 @@ fun TopBar(){
             modifier = Modifier.align(Alignment.CenterStart).padding(start = 15.dp)
         )
 
-
+        Button(modifier = Modifier.align(Alignment.CenterEnd).padding(end = 5.dp).width(40.dp),
+            colors = ButtonColors(color, color, color, color),
+            onClick = { onOpenCartClick() }) {
+        }
         if (!isSystemInDarkTheme()){
             Image(
                 painter = painterResource(R.drawable.basket),
@@ -133,8 +137,10 @@ fun TopBar(){
                 modifier = Modifier.align(Alignment.CenterEnd).padding(end = 15.dp)
             )
         }
+
     }
 }
+
 
 @Composable
 fun Slider(){
@@ -467,6 +473,6 @@ fun GreetingPreview() {
     )
 
     YaowoshTheme {
-        MainPage(modifier = Modifier.fillMaxSize(), catalogViewModel, cartViewModel, )
+        MainPage(modifier = Modifier.fillMaxSize(), catalogViewModel, cartViewModel){}
     }
 }

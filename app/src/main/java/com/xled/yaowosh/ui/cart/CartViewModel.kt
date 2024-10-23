@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.Serializable
 
 
 class CartViewModel: ViewModel() {
@@ -35,4 +36,3 @@ class CartViewModel: ViewModel() {
         }
     }
 }
-
