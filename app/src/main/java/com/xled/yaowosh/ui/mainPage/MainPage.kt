@@ -1,11 +1,15 @@
 package com.xled.yaowosh.ui.mainPage
 
 import android.annotation.SuppressLint
+import android.content.ClipData.Item
+import android.content.Intent
 import android.util.Log
+import android.widget.ImageButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -23,16 +28,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import com.xled.yaowosh.R
+import com.xled.yaowosh.data.models.CartItem
+import com.xled.yaowosh.data.models.CartState
+import com.xled.yaowosh.data.models.Product
 import com.xled.yaowosh.logic.calculateScale
+import com.xled.yaowosh.ui.MainActivity
+import com.xled.yaowosh.ui.cart.CartActivity
 import com.xled.yaowosh.ui.cart.CartViewModel
+import com.xled.yaowosh.ui.theme.YaowoshTheme
 
 
 @Composable
@@ -43,6 +58,7 @@ fun MainPage(
 ) {
     val list_product by catalogViewModel.product.observeAsState(emptyList())
     val cart_state by cartViewModel.cart.collectAsState()
+
 
     Box{
         Column(modifier = modifier.fillMaxSize()) {
@@ -78,7 +94,6 @@ fun MainPage(
                 }
             }
         }
-
 }
 
 @Composable
@@ -420,5 +435,26 @@ fun Categorys(){
                 )
             }
         }
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    val catalogViewModel = ProductViewModel()
+    val cartViewModel = CartViewModel()
+
+    cartViewModel.setCart(CartState(list_cart = listOf(
+        CartItem(
+            Product(0, "Banana", 4.8, 287, 3.99, R.drawable.banana), 1),
+        CartItem(
+            Product(1, "Pepper", 4.8, 287, 2.99, R.drawable.pepper),6 )
+            )
+        )
+    )
+
+    YaowoshTheme {
+        MainPage(modifier = Modifier.fillMaxSize(), catalogViewModel, cartViewModel, )
     }
 }
