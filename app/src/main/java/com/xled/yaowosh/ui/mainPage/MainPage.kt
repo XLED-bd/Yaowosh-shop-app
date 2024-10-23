@@ -76,9 +76,11 @@ fun MainPage(
         if (cart_state.list_cart.isNotEmpty())
             Card(modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(20.dp)
-                .background(Color.Green),
+                .padding(20.dp),
                 RoundedCornerShape(50.dp),
+                CardDefaults.cardColors(
+                    containerColor = Color.Green,
+                ), CardDefaults.cardElevation(8.dp)
 
             ) { Box {
                     LazyRow ( Modifier.align(Alignment.CenterEnd).padding(end = 40.dp)){
