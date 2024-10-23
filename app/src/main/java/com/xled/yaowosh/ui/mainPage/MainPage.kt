@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.ImageButton
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,7 @@ import com.xled.yaowosh.logic.calculateScale
 import com.xled.yaowosh.ui.MainActivity
 import com.xled.yaowosh.ui.cart.CartActivity
 import com.xled.yaowosh.ui.cart.CartViewModel
+import com.xled.yaowosh.ui.cart.MiniIconItemCart
 import com.xled.yaowosh.ui.theme.YaowoshTheme
 
 
@@ -72,25 +74,33 @@ fun MainPage(
         }
 
         if (cart_state.list_cart.isNotEmpty())
-            Box(modifier = Modifier
+            Card(modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(20.dp)
-                .fillMaxWidth()
-            ) {
-                Text(text = cart_state.list_cart.toString())
+                .background(Color.Green),
+                RoundedCornerShape(50.dp),
 
-                if (!isSystemInDarkTheme()){
-                    Image(
-                        painter = painterResource(R.drawable.basket),
-                        contentDescription = "Basket",
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(R.drawable.basket_black_theme),
-                        contentDescription = "Basket",
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    )
+            ) { Box {
+                    LazyRow ( Modifier.align(Alignment.CenterEnd).padding(end = 40.dp)){
+                        items(cart_state.list_cart) { item ->
+                            MiniIconItemCart(item)
+                        }
+                    }
+                    //Text(text = cart_state.list_cart.toString())
+
+                    if (!isSystemInDarkTheme()){
+                        Image(
+                            painter = painterResource(R.drawable.basket),
+                            contentDescription = "Basket",
+                            modifier = Modifier.align(Alignment.CenterEnd).padding(end = 10.dp)
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.basket_black_theme),
+                            contentDescription = "Basket",
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        )
+                    }
                 }
             }
         }
