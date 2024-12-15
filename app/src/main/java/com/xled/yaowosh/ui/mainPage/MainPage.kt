@@ -2,6 +2,7 @@ package com.xled.yaowosh.ui.mainPage
 
 import android.content.Intent
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -53,11 +54,12 @@ fun MainPage(
     cartViewModel: CartViewModel,
     onOpenCartClick: () -> Unit
 ) {
+
     val list_product by catalogViewModel.product.observeAsState(emptyList())
     val cart_state by cartViewModel.cart.collectAsState()
 
 
-    Box{
+    Box {
         Column(modifier = modifier.fillMaxSize()) {
             TopBar(onOpenCartClick)
             Slider()

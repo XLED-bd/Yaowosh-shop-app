@@ -35,12 +35,12 @@ class MainActivity : ComponentActivity() {
                         catalogViewModel,
                         cartViewModel,
                     ){
-                        val context = this
-                        val intent = Intent(context, CartActivity::class.java)
+                        //val context = this
+                        //val intent = Intent(context, CartActivity::class.java)
                         //val bundle = Bundle()
                         //bundle.putParcelable("cartViewModel", cartViewModel.cart.value)
-                        intent.putExtra("CartState", cartViewModel.cart.value)
-                        context.startActivity(intent)
+                        //intent.putExtra("CartState", cartViewModel.cart.value)
+                        //context.startActivity(intent)
                     }
                 }
             }

@@ -14,15 +14,14 @@ class CartActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val list_cart = intent.getParcelableExtra<CartState>("CartState")
+        //val list_cart = intent.getParcelableExtra<CartState>("CartState")
 
         setContent {
             YaowoshTheme {
                 LazyColumn {
-                    items(list_cart!!.list_cart){ item ->
-                        Text(item.toString())
+                    item{
+                        Text("Корзина")
                     }
-
                 }
 
             }
